@@ -58,7 +58,7 @@ def train(classes, config):
         print("Trénovací dataset načten :-)")
 
         validation_dataset = ImageLoader(config[11] + "/test.csv", classes, config)
-        validation_loader = DataLoader(validation_dataset, config[2], config[17], pin_memory=config[9], num_workers=config[10])
+        validation_loader = DataLoader(validation_dataset, 1, config[17], pin_memory=config[9], num_workers=config[10])
         print("Validační dataset načten :-)")
 
         for epoch in range(config[4]):
@@ -129,9 +129,12 @@ def train(classes, config):
 
                     with torch.no_grad():
                         pred = model(v_x.to(config[20]).float())
-                        loss = (loss_fn(pred[0], y0, config[23][0]) + loss_fn(pred[1], y1, config[23][1])
-                            + loss_fn(pred[2], y2, config[23][2])).item()
-                        v_losses.append(loss)
+                        try:
+                            loss = (loss_fn(pred[0], y0, config[23][0]) + loss_fn(pred[1], y1, config[23][1])
+                                + loss_fn(pred[2], y2, config[23][2]))
+                            v_losses.append(loss.item())
+                        except:
+                            pass
 
                     """
                     print("TEST TARGETS:")

@@ -10,8 +10,8 @@ if __name__ == '__main__':
     # Obecná konfigurace
     config = [0.001,  # 0 Learning rate	
               0.0005,  # 1 Weight decay
-              2,  # 2 Batch size
-              1,  # 3 Validace každých X epoch
+              16,  # 2 Batch size
+              8,  # 3 Validace každých X epoch
               100,  # 4 Epochs
               320,  # 5 Velikost vstupu (320 pro 320x320, 416 pro 416x416, 608 pro 608x608)
               [0.5],  # 6 mAP thresholds
@@ -27,7 +27,7 @@ if __name__ == '__main__':
               False,  # 16 Ukázat testovací obrázky?
               True,  # 17 Zamíchat validační a testovací dataset?
               "BC",  # 18 Jméno
-              100]  # 19 Leverage pro loss funkci
+              1]  # 19 not used
 
     TRAIN.train(classes, config)
 
