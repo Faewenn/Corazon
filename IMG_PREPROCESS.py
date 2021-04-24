@@ -140,6 +140,8 @@ def anotate(source_path, end_path):
         df = pd.read_csv(os.path.join(source_path, csvfile))
         X, Y, W, H, C = [], [], [], [], []
 
+        print(df)
+
         for a, i in enumerate(df['region_shape_attributes']):
             if len(i) == 2:
                 X.append(np.NaN)
@@ -231,6 +233,10 @@ def anotate(source_path, end_path):
         c_df = c_df.append(tmp, ignore_index=True)
         dataset = dataset.append(c_df, ignore_index=True)
 
+    for i, row in dataset.iterrows():
+        dataset['x'][i] = row['x'] + int(row['width'] / 2)
+        dataset['y'][i] = row['y'] + int(row['height'] / 2)
+
     train, val, test = [], [], []
 
     originals = 1000
@@ -269,5 +275,5 @@ def anotate(source_path, end_path):
 
 
 # rename_resize(source_path="source/images", end_path="dataset_light/images", new_resolution=(600, 400), max_images=1000)
-augment(path="dataset_light/images")
-# anotate(source_path="source/anotations", end_path="dataset_light", train_size=98, val_size=21, test_size=21)
+# augment(path="dataset_light/images")
+anotate(source_path="source/anotations", end_path="dataset_light")

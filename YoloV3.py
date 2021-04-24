@@ -350,9 +350,9 @@ class LossFunction(nn.Module):
 
         # Confidence loss (is object)
         anchors = anchors.reshape(1, 1, 1, 3, 2)
-        box_preds = torch.cat([self.sigmoid(predictions[..., 0:2]), torch.exp(predictions[..., 2:4]) * anchors], dim=-1)
-        ious = iou(box_preds[is_obj_coords], target[..., 0:4][is_obj_coords], caller="loss funkce").detach()
-        conf_loss = self.mse(self.sigmoid(predictions[..., 4:5][is_obj_coords]), ious * target[..., 4:5][is_obj_coords])
+        #box_preds = torch.cat([self.sigmoid(predictions[..., 0:2]), torch.exp(predictions[..., 2:4]) * anchors], dim=-1)
+        #ious = iou(box_preds[is_obj_coords], target[..., 0:4][is_obj_coords], caller="loss funkce").detach()
+        conf_loss = self.mse(self.sigmoid(predictions[..., 4:5][is_obj_coords]), target[..., 4:5][is_obj_coords])
 
         # Confidence loss (no object)
         no_conf_loss = self.bce((predictions[..., 4:5][no_obj_coords]), (target[..., 4:5][no_obj_coords]))

@@ -65,13 +65,6 @@ class ImageLoader(Dataset):
         # Vytvoření targetů
         targets = boxes_to_targets([box], self.config, self.classes.keys())
 
-        """
-        print("DATASET OUT:")
-        print("Image:", np.moveaxis(image, 2, 0).shape, "targets:", targets[0].shape, targets[1].shape, targets[2].shape,
-              "name:", self.annotations.iloc[index, 0])
-        print("Box:", box)
-        """
-
         return np.moveaxis(image, 2, 0), tuple(targets)
 
     def __len__(self):
