@@ -1,37 +1,39 @@
 from IOU import iou
 import itertools
+import numpy as np
 
 
 def nms(scale_boxes, thresh=0.5):
     #print("NMS", scale_boxes[0].shape, scale_boxes[1].shape, scale_boxes[2].shape)
 
     preds = []
-    for batch in scale_boxes:
-        for boxes in batch:
+    for b in range(len(scale_boxes[0])):
+        boxes = np.concatenate((scale_boxes[0][b], scale_boxes[1][b], scale_boxes[2][b]))
+        #for boxes in batch:
             # boxes = [[x1, x2, y1, y2, conf, t1, t2, t3, t4, t5, t6, t7][x1, x2, y1, y2, conf, t1, t2, t3, t4, t5, t6, t7]...]
 
-            # Delete all with small confidence
-            boxes = [list(box) for box in boxes if box[4] >= thresh]
+        # Delete all with small confidence
+        boxes = [list(box) for box in boxes if box[4] >= thresh]
 
-            # Seřadit boxy podle confidence
-            boxes = sorted(boxes, key=lambda box: box[4], reverse=True)
+        # Seřadit boxy podle confidence
+        boxes = sorted(boxes, key=lambda box: box[4], reverse=True)
 
-            if boxes:
-                for i in range(5, len(boxes[0])):  # Pro každou třídu
-                    # Pouze boxy konkrétní třídy
-                    class_boxes = [box for box in boxes if box[i] == max(box[5:]) and box[i] != 0]
+        if boxes:
+            for i in range(5, len(boxes[0])):  # Pro každou třídu
+                # Pouze boxy konkrétní třídy
+                class_boxes = [box for box in boxes if box[i] == max(box[5:]) and box[i] != 0]
 
-                    while class_boxes:  # Dokud jsou nevyřízené bounding boxy
-                        prediction = class_boxes.pop(0)  # Největší confidence BB označit
-                        preds.append(prediction)  # Přidat jej do výsledných BB
-                        if not class_boxes:  # Pokud už nezbývá žádný BB, skonči
-                            break
+                while class_boxes:  # Dokud jsou nevyřízené bounding boxy
+                    prediction = class_boxes.pop(0)  # Největší confidence BB označit
+                    preds.append(prediction)  # Přidat jej do výsledných BB
+                    if not class_boxes:  # Pokud už nezbývá žádný BB, skonči
+                        break
 
-                        # Jinak z class boxů odebrat všechny, které mají s označeným boxem iou >= threshold
-                        class_boxes = []
-                        for box in class_boxes:
-                            if iou(prediction, box, caller="NMS") <= thresh:
-                                class_boxes.append(box)
+                    # Jinak z class boxů odebrat všechny, které mají s označeným boxem iou >= threshold
+                    class_boxes = []
+                    for box in class_boxes:
+                        if iou(prediction, box, caller="NMS") <= thresh:
+                            class_boxes.append(box)
 
     return [k for k, _ in itertools.groupby(preds)]
 

@@ -21,6 +21,7 @@ def show_image(image, true_boxes, pred_boxes, classes):
         plt.text(x_coord, y_coord, classes[class_index]+" - "+str(box[4]), bbox={'fc': colors[class_index]})
 
     for box in true_boxes:
+        break
         class_index = box[5:].index(max(box[5:]))
         x_coord, y_coord = (box[0] - box[2] / 2) * image_size, (box[1] - box[3] / 2) * image_size
         width, height = box[2] * image_size, box[3] * image_size
