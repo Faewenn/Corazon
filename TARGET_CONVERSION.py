@@ -22,9 +22,7 @@ def targets_to_boxes(targets, anchors):
                 target[b][i][j][a][1] = (target[b][i][j][a][1] + i) / scale
                 target[b][i][j][a][2:4] = target[b][i][j][a][2] / scale, target[b][i][j][a][3] / scale
 
-            target = target.reshape((target.shape[0], scale * scale * len(anchors), target.shape[4]))
-
-            boxes.append(target)
+            boxes.append(target.reshape((target.shape[0], scale * scale * len(anchors), target.shape[4])))
 
     return boxes
 

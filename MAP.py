@@ -43,13 +43,13 @@ def mAP(all_true_boxes, all_pred_boxes, classes, thresholds=0.5):
 
             tp = []
             for detection in detections:
-                if detection[1] == 1:
+                if detection[1] == 1:  # True positives
                     tp.append(1)
-                else:
+                else:  # False positives
                     tp.append(0)
 
-            precision = np.cumsum(tp) / np.arange(1, len(tp) + 1)
-            recall = np.cumsum(tp) / total_true_boxes if total_true_boxes != 0 else np.zeros(len(tp))
+            precision = np.cumsum(tp) / np.arange(1, len(tp) + 1)  # TP / TP + FP
+            recall = np.cumsum(tp) / total_true_boxes if total_true_boxes != 0 else np.zeros(len(tp))  # TP / TP + FN
 
             map_.append(np.trapz(np.insert(precision, 0, 1), np.insert(recall, 0, 0)))
 

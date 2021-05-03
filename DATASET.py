@@ -20,7 +20,7 @@ class ImageLoader(Dataset):
 
         # Zmenšení a doplnění na čtverec
         scale = self.config[5] / max(image.size)
-        if image.size[0] != image.size[1]:  # Pokud má obraz nemá tvar čtverce
+        if image.size[0] != image.size[1]:  # Pokud obraz nemá tvar čtverce
             old_size = image.size
             image = image.resize((int(image.size[0] * scale), int(image.size[1] * scale)))
             offset = random.randint(0, max(image.size) - min(image.size))
