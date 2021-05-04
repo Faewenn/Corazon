@@ -348,17 +348,16 @@ class LossFunction(nn.Module):
         is_obj_coords = target[..., 4] == 1
         no_obj_coords = target[..., 4] == 0
 
-        # Confidence loss (is object)
-        conf_loss = self.mse(predictions[..., 4:5][is_obj_coords], target[..., 4:5][is_obj_coords])
-
-        # Confidence loss (no object)
-        no_conf_loss = self.mse(predictions[..., 4:5][no_obj_coords], target[..., 4:5][no_obj_coords])
-
         # Box loss
         anchors = anchors.reshape(1, 1, 1, 3, 2)
         predictions[..., 0:2] = self.sigmoid(predictions[..., 0:2])
         predictions[..., 2:4] = torch.exp(predictions[..., 2:4]) * anchors
         box_loss = self.mse(predictions[..., 0:4][is_obj_coords], target[..., 0:4][is_obj_coords])
+
+        # Confidence loss
+        ious = iou(predictions[..., 0:4][is_obj_coords], target[..., 0:4][is_obj_coords], caller="loss funkce").detach()
+        conf_loss = self.mse(self.sigmoid(predictions[..., 4:5][is_obj_coords]), ious * target[..., 4:5][is_obj_coords])
+        no_conf_loss = self.mse(predictions[..., 4:5][no_obj_coords], target[..., 4:5][no_obj_coords])
 
         # Class loss
         class_loss = self.bce((predictions[..., 5:][is_obj_coords]), (target[..., 5:][is_obj_coords]))

@@ -4,6 +4,13 @@ from IOU import iou
 
 
 def targets_to_boxes(targets, anchors):
+    """
+    :param targets: Targety
+    :param anchors: Anchory
+    :return: Bounding boxes
+
+    Targetvé hodnoty se převedou do relativity celého obrazu a převedou se do tvaru bounding boxů
+    """
     #print("Targets to boxes:", targets[0].shape, targets[1].shape, targets[2].shape)
     boxes = []
 
@@ -28,6 +35,20 @@ def targets_to_boxes(targets, anchors):
 
 
 def boxes_to_targets(boxes, config, classes, thresh=0.5):
+    """
+    :param boxes: Bounding boxes
+    :param config: Knfigurační list
+    :param classes: Klasifikační třídy
+    :param thresh: Threshold pro ignorování anchorů, které mají vysoké IoU, a nejsou špatně
+    :return: targety
+
+    Targetové hodnoty X, Y, šířka a výška se převede do relativity buňky
+    Funkce, která vytvoří prázdné mřížky targetů s anchory, poté spočítá IoU se všemi bounding boxy.
+    Podle toho, který anchor měl nejlepší IoU s bounding boxem, se nastaví jako nenulový anchor.
+    Protože na každém scale může být pro každý bounding box jen jeden anchor nenulvý,
+    ostatní anchory, které mají velké IoU, ale ne nejvyšší se nastaví do hodnoty -1.
+    Hodnota confidene == -1 zaručuje v loss funkci ignorování, a tím netrestá model, když tyto anchory předpoví
+    """
     targets = [np.zeros((scale, scale, len(config[21]), len(classes) + 5)) for scale in config[22]]
 
     for box in boxes:

@@ -21,9 +21,9 @@ if __name__ == '__main__':
               'dataset_light',  # 11 Složka s datasetem
               'dataset_light/images',  # 12 Složka s obrázky
               "center",  # 13 Souřadniceový systém (center / corners)
-              False,  # 14 Train?
+              True,  # 14 Train?
               True,  # 15 Load checkpoint?
-              False,  # 16 Ukázat testovací obrázky?
+              True,  # 16 Ukázat testovací obrázky?
               True,  # 17 Zamíchat validační a testovací dataset?
               "BC",  # 18 Jméno
               False]  # 19 Zobrazit ground truth v show_image?
