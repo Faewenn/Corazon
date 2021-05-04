@@ -3,6 +3,15 @@ from IOU import iou
 
 
 def mAP(all_true_boxes, all_pred_boxes, classes, thresholds=0.5):
+    """
+    :param all_true_boxes: Všechny GT bounding boxy
+    :param all_pred_boxes: Všechny predikované bounding boxy
+    :param classes: Klasifikační třídy
+    :param thresholds: Prahy pro rozlišení TP od FP
+    :return: hodnota mAP
+
+    Funkce, která z poskytnutých GT a predikcí spočítá mAP (pro různé thresholdy a třídy)
+    """
     # https://towardsdatascience.com/map-mean-average-precision-might-confuse-you-5956f1bfa9e2
 
     if not isinstance(thresholds, list):
