@@ -349,10 +349,10 @@ class LossFunction(nn.Module):
         no_obj_coords = target[..., 4] == 0
 
         # Confidence loss (is object)
-        conf_loss = self.mse(self.sigmoid(predictions[..., 4:5][is_obj_coords]), target[..., 4:5][is_obj_coords])
+        conf_loss = self.mse(predictions[..., 4:5][is_obj_coords], target[..., 4:5][is_obj_coords])
 
         # Confidence loss (no object)
-        no_conf_loss = self.mse((predictions[..., 4:5][no_obj_coords]), (target[..., 4:5][no_obj_coords]))
+        no_conf_loss = self.mse(predictions[..., 4:5][no_obj_coords], target[..., 4:5][no_obj_coords])
 
         # Box loss
         anchors = anchors.reshape(1, 1, 1, 3, 2)

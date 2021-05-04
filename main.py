@@ -23,10 +23,10 @@ if __name__ == '__main__':
               "center",  # 13 Souřadniceový systém (center / corners)
               False,  # 14 Train?
               True,  # 15 Load checkpoint?
-              True,  # 16 Ukázat testovací obrázky?
+              False,  # 16 Ukázat testovací obrázky?
               True,  # 17 Zamíchat validační a testovací dataset?
               "BC",  # 18 Jméno
-              1]  # 19 not used
+              False]  # 19 Zobrazit ground truth v show_image?
 
     TRAIN.train(classes, config)
 
