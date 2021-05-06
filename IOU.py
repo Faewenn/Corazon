@@ -9,8 +9,6 @@ def iou(box1, box2, caller=None):
     :return: hodnotu IoU
     """
     if caller != "loss funkce":
-        #print("IOU:", caller, "boxes:", box1, box2)
-
         for box in (box1, box2):  # Převední z centrovaných souřadnic do rohových souřadnic
             box[0], box[2] = box[0] - box[2] / 2, box[0] + box[2] / 2
             box[1], box[3] = box[1] - box[3] / 2, box[1] + box[3] / 2

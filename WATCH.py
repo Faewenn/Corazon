@@ -8,6 +8,7 @@ from PIL import Image
 import random
 from matplotlib import patches
 from matplotlib import pyplot as plt
+import cv2 as cv
 
 
 def show(image, pred_boxes, classes):
@@ -26,7 +27,7 @@ def show(image, pred_boxes, classes):
         rect = patches.Rectangle((x_coord, y_coord), width, height, lw=1, ec=colors[class_index], fc="none")
 
         ax.add_patch(rect)
-        plt.text(x_coord, y_coord, classes[class_index]+" - "+str(box[4]), bbox={'fc': colors[class_index]})
+        plt.text(x_coord, y_coord, classes[class_index]+" - "+str(round(box[4]*100000)/1000) + "%", bbox={'fc': colors[class_index]})
 
     plt.show()
 
@@ -80,31 +81,31 @@ def train(classes):
 
         else:
             return
+        for i in range(4):
+            for image_name in os.listdir(config[19]):
+                image = Image.open(os.path.join(config[19], image_name)).convert("RGB")
 
-        for image_name in os.listdir(config[19]):
-            image = Image.open(os.path.join(config[19], image_name)).convert("RGB")
+                # Zmenšení a doplnění na čtverec
+                scale = config[5] / max(image.size)
+                if image.size[0] != image.size[1]:  # Pokud obraz nemá tvar čtverce
+                    old_size = image.size
+                    image = image.resize((int(image.size[0] * scale), int(image.size[1] * scale)))
+                    offset = random.randint(0, max(image.size) - min(image.size))
+                    square_image = Image.fromarray(np.zeros(shape=(max(image.size), max(image.size), 3)), 'RGB')
+                    if old_size[0] > old_size[1]:  # Pokud je obraz širší, než vyšší
+                        square_image.paste(image, (0, offset))
+                    else:  # Pokud je obraz vyšší, než širší
+                        square_image.paste(image, (offset, 0))
+                    image = np.array(square_image.rotate(i*90))
+                else:  # Pokud je obraz ve tvaru čtverce
+                    image = np.array(image.rotate(i*90))
 
-            # Zmenšení a doplnění na čtverec
-            scale = config[5] / max(image.size)
-            if image.size[0] != image.size[1]:  # Pokud obraz nemá tvar čtverce
-                old_size = image.size
-                image = image.resize((int(image.size[0] * scale), int(image.size[1] * scale)))
-                offset = random.randint(0, max(image.size) - min(image.size))
-                square_image = Image.fromarray(np.zeros(shape=(max(image.size), max(image.size), 3)), 'RGB')
-                if old_size[0] > old_size[1]:  # Pokud je obraz širší, než vyšší
-                    square_image.paste(image, (0, offset))
-                else:  # Pokud je obraz vyšší, než širší
-                    square_image.paste(image, (offset, 0))
-                image = np.array(square_image)
-            else:  # Pokud je obraz ve tvaru čtverce
-                image = np.array(image)
-
-            image = torch.from_numpy(np.moveaxis(image, 2, 0))
-            image = image.to(config[20]).float()
-            with torch.no_grad():
-                out = model(image.unsqueeze(0))
-                pred_boxes = targets_to_boxes(out, config[21])
-                show(image.to('cpu'), nms(pred_boxes, config[7]), classes)
+                image = torch.from_numpy(np.moveaxis(image, 2, 0))
+                image = image.to(config[20]).float()
+                with torch.no_grad():
+                    out = model(image.unsqueeze(0))
+                    pred_boxes = targets_to_boxes(out, config[21])
+                    show(image.to('cpu'), nms(pred_boxes, config[7]), classes)
 
 
 if __name__ == "__main__":

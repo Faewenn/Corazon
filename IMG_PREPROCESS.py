@@ -274,6 +274,82 @@ def anotate(source_path, end_path):
     testdf.to_csv(os.path.join(end_path, "test.csv"), index=False)
 
 
+def sort_dataset(source_path, end_path):
+    train_df = pd.read_csv(os.path.join(source_path, "train.csv"))
+    val_df = pd.read_csv(os.path.join(source_path, "val.csv"))
+    test_df = pd.read_csv(os.path.join(source_path, "test.csv"))
+
+    df = train_df.copy()
+    df = df.append(val_df)
+    df = df.append(test_df)
+
+    train_df = train_df[0:0]
+    val_df = val_df[0:0]
+    test_df = test_df[0:0]
+
+    train = []
+    val = []
+    test = []
+    all = []
+
+    for i, row in df.iterrows():
+        tmp = row['filename']
+        string = tmp[:tmp.find('_')] + tmp[tmp.rindex('_'):]
+        if string == tmp:
+            all.append(string)
+    all.sort()
+
+    originals = 1000
+    whole = 1000
+
+    for i in range(7):
+        for j in range(1):
+            numbers = np.random.choice(originals, originals, replace=False)
+            train.append(list(np.sort(numbers[:int(len(numbers) * 0.7)]) + i * whole + j * originals))
+            val.append(
+                list(np.sort(numbers[int(len(numbers) * 0.7):int(len(numbers) * 0.85)]) + i * whole + j * originals))
+            test.append(list(np.sort(numbers[int(len(numbers) * 0.85):]) + i * whole + j * originals))
+
+    train = [item for sublist in train for item in sublist]
+    val = [item for sublist in val for item in sublist]
+    test = [item for sublist in test for item in sublist]
+
+    train_labels = []
+    val_labels = []
+    test_labels = []
+
+    for i in range(7):
+        for j in range(1000):
+            if j in train:
+                train_labels.append(all[j + i * 1000])
+            elif j in val:
+                val_labels.append(all[j + i * 1000])
+            elif j in test:
+                test_labels.append(all[j + i * 1000])
+
+    for i, row in df.iterrows():
+        tmp = row['filename']
+        string = tmp[:tmp.find('_')] + tmp[tmp.rindex('_'):]
+        if string in train_labels:
+            train_df = train_df.append(row)
+        elif string in val_labels:
+            val_df = val_df.append(row)
+        elif string in test_labels:
+            test_df = test_df.append(row)
+
+    train_df.reset_index(drop=True)
+    val_df.reset_index(drop=True)
+    test_df.reset_index(drop=True)
+
+    train_df.to_csv(os.path.join(end_path, "train.csv"), index=False)
+    val_df.to_csv(os.path.join(end_path, "val.csv"), index=False)
+    test_df.to_csv(os.path.join(end_path, "test.csv"), index=False)
+
 # rename_resize(source_path="source/images", end_path="dataset_light/images", new_resolution=(600, 400), max_images=1000)
 # augment(path="dataset_light/images")
-anotate(source_path="source/anotations", end_path="dataset_light")
+# anotate(source_path="source/anotations", end_path="dataset_light")
+# sort_dataset("anotace", "anotace/new")
+
+
+
+

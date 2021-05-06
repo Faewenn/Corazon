@@ -1,6 +1,7 @@
 from matplotlib import patches
 from matplotlib import pyplot as plt
 import numpy as np
+from IOU import iou
 
 
 def show_image(image, true_boxes, pred_boxes, classes):
@@ -27,7 +28,7 @@ def show_image(image, true_boxes, pred_boxes, classes):
         rect = patches.Rectangle((x_coord, y_coord), width, height, lw=1, ec=colors[class_index], fc="none")
 
         ax.add_patch(rect)
-        plt.text(x_coord, y_coord, classes[class_index] + " - " + str(box[4]), bbox={'fc': colors[class_index]})
+        plt.text(x_coord, y_coord, classes[class_index] + " - " + str(round(box[4]*10000)/100) + "%", bbox={'fc': colors[class_index]})
 
     if true_boxes is not None:
         for box in true_boxes:
@@ -38,6 +39,6 @@ def show_image(image, true_boxes, pred_boxes, classes):
             rect = patches.Rectangle((x_coord, y_coord), width, height, lw=3, ec="white", fc="none")
 
             ax.add_patch(rect)
-            plt.text(x_coord, y_coord, classes[class_index] + " - " + str(box[4]), bbox={'fc': "white"})
+            plt.text(x_coord, y_coord, classes[class_index] + " - " + str(round(box[4]*10000)/100) + "%", bbox={'fc': "white"})
 
     plt.show()
