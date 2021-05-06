@@ -10,6 +10,7 @@ import tqdm
 import YoloV3
 import os
 from SHOW_IMAGE import show_image
+import time
 
 
 def train(classes, config):
@@ -146,6 +147,7 @@ def play(model, optimizer, loss_fn, scaler, config, classes, dataset, history, f
         use = torch.cuda.amp.autocast() if function == 'train' else torch.no_grad()
         with use:
             out = model(x)
+
             loss = (loss_fn(out[0], y0, config[23][0]) + loss_fn(out[1], y1, config[23][1])
                     + loss_fn(out[2], y2, config[23][2]))
             losses.append(loss.item())
@@ -159,6 +161,8 @@ def play(model, optimizer, loss_fn, scaler, config, classes, dataset, history, f
         # Vypočítání bounfing boxů
         else:
             true_boxes = targets_to_boxes(y, config[21])
+            for i, o in enumerate(out):
+                out[i][..., 4:5] = torch.sigmoid(o[..., 4:5])
             pred_boxes = targets_to_boxes(out, config[21])
 
             all_true_boxes.append(nms(true_boxes, config[7]))
